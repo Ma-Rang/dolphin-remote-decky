@@ -1,0 +1,11 @@
+{
+  "name": "Dolphin Remote",
+  "author": "Ma Rang",
+  "flags": [],
+  "api_version": 1,
+  "publish": {
+    "tags": ["dolphin", "emulation", "controller", "wiimote", "gamecube"],
+    "description": "Quick controls for Dolphin emulator — manage controllers, playback, and game launching from Steam Deck Game Mode.",
+    "image": ""
+  }
+}
