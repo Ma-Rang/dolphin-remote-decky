@@ -38,6 +38,7 @@ export function SaveStates() {
   }, [expanded, refresh]);
 
   const handleSave = async (slot: number) => {
+    if (busy) return;
     setBusy(true);
     try {
       await saveState(slot);
@@ -47,7 +48,8 @@ export function SaveStates() {
     }
   };
 
-  const handleLoad = async (slot: number) => {
+  const handleLoad = async (slot: number, empty: boolean) => {
+    if (busy || empty) return;
     setBusy(true);
     try {
       await loadState(slot);
@@ -71,7 +73,6 @@ export function SaveStates() {
             <Field
               label={`Slot ${s.slot}`}
               description={s.empty ? "Empty" : s.info}
-              childrenLayout="below"
               bottomSeparator="none"
             >
               <Focusable
@@ -86,18 +87,14 @@ export function SaveStates() {
                 >
                   <FaSave />
                 </DialogButton>
-                <DialogButton
-                  disabled={busy || s.empty}
-                  onClick={() => handleLoad(s.slot)}
-                  style={{
-                    minWidth: 0,
-                    padding: "10px 12px",
-                    flex: 1,
-                    opacity: s.empty ? 0.3 : 1,
-                  }}
-                >
-                  <FaFolderOpen />
-                </DialogButton>
+                {!s.empty && (
+                  <DialogButton
+                    onClick={() => handleLoad(s.slot, s.empty)}
+                    style={{ minWidth: 0, padding: "10px 12px", flex: 1 }}
+                  >
+                    <FaFolderOpen />
+                  </DialogButton>
+                )}
               </Focusable>
             </Field>
           </PanelSectionRow>
