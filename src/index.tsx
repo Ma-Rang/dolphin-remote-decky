@@ -7,6 +7,7 @@ import { PlaybackButtons, StatusLine } from "./components/ConnectionStatus";
 import { WiiControllers } from "./components/WiiControllers";
 import { GCControllers } from "./components/GCControllers";
 import { GameLauncher } from "./components/GameLauncher";
+import { SaveStates } from "./components/SaveStates";
 import { AdvancedSettings } from "./components/AdvancedSettings";
 
 function Content() {
@@ -19,10 +20,11 @@ function Content() {
   return (
     <>
       <PanelSection>
-        {connected && isActive && <PlaybackButtons state={dolphin} />}
+        {connected && isActive && <PlaybackButtons state={dolphin} onRefresh={dolphin.refresh} />}
         {connected && <GameLauncher />}
         <StatusLine state={dolphin} />
       </PanelSection>
+      {connected && isActive && <SaveStates />}
       {connected && !(isActive && isGcOrTriforce) && <WiiControllers />}
       {connected && <GCControllers />}
       <AdvancedSettings connected={connected} onReconnect={dolphin.refresh} />

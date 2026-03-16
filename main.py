@@ -112,6 +112,9 @@ class Plugin:
     async def fullscreen_toggle(self) -> str:
         return await self._send_and_recv('{"cmd":"fullscreen_toggle"}')
 
+    async def get_fullscreen(self) -> str:
+        return await self._send_and_recv('{"cmd":"get_fullscreen"}')
+
     async def get_config(self, system: str, section: str, key: str) -> str:
         return await self._send_and_recv(json.dumps({
             "cmd": "get_config", "system": system, "section": section, "key": key,
@@ -140,6 +143,15 @@ class Plugin:
 
     async def get_system_info(self) -> str:
         return await self._send_and_recv('{"cmd":"get_system_info"}')
+
+    async def list_save_states(self) -> str:
+        return await self._send_and_recv('{"cmd":"list_save_states"}')
+
+    async def save_state(self, slot: int) -> str:
+        return await self._send_and_recv(json.dumps({"cmd": "save_state", "slot": slot}))
+
+    async def load_state(self, slot: int) -> str:
+        return await self._send_and_recv(json.dumps({"cmd": "load_state", "slot": slot}))
 
     # ── Lifecycle ──────────────────────────────────────────────────────
 

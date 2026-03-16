@@ -20,6 +20,7 @@ export const sendResume = callable<[], string>("resume");
 // Media / display
 export const sendScreenshot = callable<[], string>("screenshot");
 export const sendFullscreenToggle = callable<[], string>("fullscreen_toggle");
+export const getFullscreen = callable<[], string>("get_fullscreen");
 
 // Config
 export const getConfig = callable<[system: string, section: string, key: string], string>("get_config");
@@ -28,6 +29,11 @@ export const setConfigBatch = callable<[settingsJson: string], string>("set_conf
 // GC controllers
 export const gcChangeDevice = callable<[channel: number, deviceType: number], string>("gc_change_device");
 export const gcAdapterStatus = callable<[], string>("gc_adapter_status");
+
+// Save states
+export const listSaveStates = callable<[], string>("list_save_states");
+export const saveState = callable<[slot: number], string>("save_state");
+export const loadState = callable<[slot: number], string>("load_state");
 
 // Wii controllers
 export const wiimoteSync = callable<[], string>("wiimote_sync");

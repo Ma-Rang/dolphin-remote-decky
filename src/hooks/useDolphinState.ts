@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { addEventListener, removeEventListener } from "@decky/api";
-import { isConnected, getStatus, parseResponse } from "../lib/backend";
+import { connect, isConnected, getStatus, getFullscreen, parseResponse } from "../lib/backend";
 
 export interface DolphinState {
   connected: boolean;
@@ -8,6 +8,7 @@ export interface DolphinState {
   platform: string;   // "wii" | "gamecube" | "triforce" | ""
   gameId: string;
   gameTitle: string;
+  fullscreen: boolean;
 }
 
 export function useDolphinState() {
@@ -17,6 +18,7 @@ export function useDolphinState() {
     platform: "",
     gameId: "",
     gameTitle: "",
+    fullscreen: false,
   });
 
   const mountedRef = useRef(true);
@@ -35,6 +37,13 @@ export function useDolphinState() {
           gameTitle: (resp.title as string) || "",
         }));
       }
+      // Fetch fullscreen state separately
+      const fsRaw = await getFullscreen();
+      const fsResp = parseResponse(fsRaw);
+      if (!mountedRef.current) return;
+      if (fsResp.ok) {
+        setState((prev) => ({ ...prev, fullscreen: fsResp.fullscreen as boolean }));
+      }
     } catch {
       // Ignore fetch errors
     }
@@ -50,6 +59,15 @@ export function useDolphinState() {
       if (conn) {
         await fetchStatus();
       } else {
+        // Try to reconnect when panel is opened
+        const retryRaw = await connect("", 0);
+        const retryResp = parseResponse(retryRaw);
+        if (!mountedRef.current) return;
+        if (retryResp.ok) {
+          setState((prev) => ({ ...prev, connected: true }));
+          await fetchStatus();
+          return;
+        }
         setState((prev) => ({
           ...prev,
           connected: false,
@@ -57,6 +75,7 @@ export function useDolphinState() {
           platform: "",
           gameId: "",
           gameTitle: "",
+          fullscreen: false,
         }));
       }
     } catch {
@@ -68,6 +87,7 @@ export function useDolphinState() {
           platform: "",
           gameId: "",
           gameTitle: "",
+          fullscreen: false,
         }));
       }
     }
@@ -89,6 +109,7 @@ export function useDolphinState() {
             platform: "",
             gameId: "",
             gameTitle: "",
+            fullscreen: false,
           });
           return;
         }

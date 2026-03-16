@@ -11,16 +11,22 @@ import {
   sendScreenshot,
   sendFullscreenToggle,
 } from "../lib/backend";
-import { FaPlay, FaPause, FaStop, FaCamera, FaExpand } from "react-icons/fa";
+import { FaPlay, FaPause, FaStop, FaCamera, FaExpand, FaCompress } from "react-icons/fa";
 import type { DolphinState } from "../hooks/useDolphinState";
 
 interface Props {
   state: DolphinState;
 }
 
-export function PlaybackButtons({ state }: Props) {
-  const { emuState } = state;
+export function PlaybackButtons({ state, onRefresh }: Props & { onRefresh?: () => void }) {
+  const { emuState, fullscreen } = state;
   const isPaused = emuState === "paused";
+
+  const handleFullscreenToggle = async () => {
+    await sendFullscreenToggle();
+    // Give Dolphin a moment to process, then refresh state
+    setTimeout(() => onRefresh?.(), 200);
+  };
 
   return (
     <PanelSectionRow>
@@ -45,10 +51,10 @@ export function PlaybackButtons({ state }: Props) {
             <FaCamera />
           </DialogButton>
           <DialogButton
-            onClick={() => sendFullscreenToggle()}
+            onClick={handleFullscreenToggle}
             style={{ minWidth: 0, padding: "10px 12px" }}
           >
-            <FaExpand />
+            {fullscreen ? <FaCompress /> : <FaExpand />}
           </DialogButton>
         </Focusable>
       </Field>
