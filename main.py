@@ -153,6 +153,23 @@ class Plugin:
     async def load_state(self, slot: int) -> str:
         return await self._send_and_recv(json.dumps({"cmd": "load_state", "slot": slot}))
 
+    async def is_title_installed(self, title_id: str) -> str:
+        return await self._send_and_recv(json.dumps({
+            "cmd": "is_title_installed", "title_id": title_id,
+        }))
+
+    async def boot_wii_menu(self) -> str:
+        """Boot the Wii System Menu, checking if installed first."""
+        check_raw = await self._send_and_recv(
+            '{"cmd":"is_title_installed","title_id":"0000000100000002"}'
+        )
+        check = self._try_parse(check_raw)
+        if not check.get("installed"):
+            return json.dumps({"ok": False, "error": "Wii System Menu is not installed in the NAND"})
+        return await self._send_and_recv(
+            '{"cmd":"boot_nand","title_id":"0000000100000002"}'
+        )
+
     # ── Lifecycle ──────────────────────────────────────────────────────
 
     async def _main(self):

@@ -13,6 +13,7 @@ export const getSystemInfo = callable<[], string>("get_system_info");
 // Emulation control
 export const bootGame = callable<[path: string], string>("boot_game");
 export const bootNand = callable<[titleId: string], string>("boot_nand");
+export const bootWiiMenu = callable<[], string>("boot_wii_menu");
 export const sendStop = callable<[], string>("stop");
 export const sendPause = callable<[], string>("pause");
 export const sendResume = callable<[], string>("resume");

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { PanelSectionRow, DropdownItem } from "@decky/ui";
-import { WII_MENU_TITLE_ID } from "../lib/constants";
-import { listGames, bootGame, bootNand, parseResponse } from "../lib/backend";
+import { listGames, bootGame, bootWiiMenu, parseResponse } from "../lib/backend";
 
 interface GameEntry {
   path: string;
@@ -45,7 +44,11 @@ export function GameLauncher() {
     if (opt.data === BOOT_PLACEHOLDER) return;
 
     if (opt.data === WII_MENU_KEY) {
-      await bootNand(WII_MENU_TITLE_ID);
+      const raw = await bootWiiMenu();
+      const resp = parseResponse(raw);
+      if (!resp.ok && resp.error) {
+        console.warn("[Dolphin Remote] Wii Menu boot failed:", resp.error);
+      }
     } else {
       await bootGame(opt.data);
     }
@@ -57,7 +60,6 @@ export function GameLauncher() {
   return (
     <PanelSectionRow>
       <DropdownItem
-        label="Launch Game"
         rgOptions={options}
         selectedOption={selectedOption}
         strDefaultLabel="Boot game..."
